@@ -1,15 +1,9 @@
 import os
 import pickle
-
 import mediapipe as mp
 import cv2
-import matplotlib.pyplot as plt
-
 
 mp_hands = mp.solutions.hands
-mp_drawing = mp.solutions.drawing_utils
-mp_drawing_styles = mp.solutions.drawing_styles
-
 hands = mp_hands.Hands(static_image_mode=True, min_detection_confidence=0.3)
 
 DATA_DIR = './data'
@@ -19,7 +13,6 @@ labels = []
 for dir_ in os.listdir(DATA_DIR):
     for img_path in os.listdir(os.path.join(DATA_DIR, dir_)):
         data_aux = []
-
         x_ = []
         y_ = []
 
@@ -42,8 +35,10 @@ for dir_ in os.listdir(DATA_DIR):
                     data_aux.append(x - min(x_))
                     data_aux.append(y - min(y_))
 
-            data.append(data_aux)
-            labels.append(dir_)
+            # Adicionar somente se tiver exatamente 42 landmarks
+            if len(data_aux) == 42:
+                data.append(data_aux)
+                labels.append(dir_)
 
 f = open('data.pickle', 'wb')
 pickle.dump({'data': data, 'labels': labels}, f)
